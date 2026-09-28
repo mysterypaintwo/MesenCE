@@ -292,6 +292,8 @@ namespace Mesen.Windows
 					cmdLine.LoadFiles();
 					cmdLine.OnAfterInit(this);
 
+					App.SetOpenedFilesHandler(files => Instance_ArgumentsReceived(this, new ArgumentsReceivedEventArgs(files)));
+
 					if(ConfigManager.Config.Preferences.AutomaticallyCheckForUpdates) {
 						_model.MainMenu.CheckForUpdate(this, true);
 					}

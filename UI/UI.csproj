@@ -587,7 +587,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-	  <AvaloniaResource Include="Assets\**" />
+	  <AvaloniaResource Include="Assets\**" Exclude="Assets\MacDocumentTypes.plist" />
 	  <AvaloniaResource Include="Styles\AvaloniaEditStyles.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </AvaloniaResource>
@@ -687,6 +687,14 @@
 
 		<Copy Condition="'$(RuntimeIdentifier)'=='osx-x64' Or '$(RuntimeIdentifier)'=='osx-arm64'" SourceFiles="./Assets/MesenIcon.icns" DestinationFolder="$(OutDir)" />
 		<ZipDirectory SourceDirectory="$(OutDir)Dependencies" DestinationFile="$(ProjectDir)Dependencies.zip" Overwrite="true" />
+	</Target>
+
+	<Target Name="AddMacDocumentTypes" AfterTargets="BundleApp" Condition="'$(RuntimeIdentifier)'=='osx-x64' Or '$(RuntimeIdentifier)'=='osx-arm64'">
+		<PropertyGroup>
+			<MacInfoPlist>$(PublishDir)$(CFBundleName).app/Contents/Info.plist</MacInfoPlist>
+		</PropertyGroup>
+		<Exec Command="/usr/libexec/PlistBuddy -c &quot;Delete :CFBundleDocumentTypes&quot; &quot;$(MacInfoPlist)&quot; || true" />
+		<Exec Command="/usr/libexec/PlistBuddy -c &quot;Merge '$(ProjectDir)Assets/MacDocumentTypes.plist'&quot; &quot;$(MacInfoPlist)&quot;" />
 	</Target>
 
 	<Target Name="CleanDependencies" AfterTargets="Clean">

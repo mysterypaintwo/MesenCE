@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls.Platform;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Avalonia.Threading;
 using Mesen.Config;
@@ -12,7 +13,9 @@ using Mesen.Utilities;
 using Mesen.ViewModels;
 using Mesen.Windows;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace Mesen
@@ -20,6 +23,9 @@ namespace Mesen
 	public class App : Application
 	{
 		public static bool ShowConfigWindow { get; set; }
+
+		private static List<string> _pendingOpenedFiles = new();
+		private static Action<string[]>? _openedFilesHandler;
 
 		public override void Initialize()
 		{
@@ -74,9 +80,42 @@ namespace Mesen
 						ConfigManager.ResetSettings(false);
 						desktop.MainWindow = new MainWindow();
 					}
+
+					if(TryGetFeature(typeof(IActivatableLifetime)) is IActivatableLifetime activatableLifetime) {
+						activatableLifetime.Activated += OnActivated;
+					}
 				}
 			}
 			base.OnFrameworkInitializationCompleted();
+		}
+
+		private void OnActivated(object? sender, ActivatedEventArgs e)
+		{
+			//On macOS, files opened via Finder/Dock (double-click, "Open With", drag & drop on icon, etc.)
+			//are not passed on the command line, they are sent to the app via this event instead
+			if(e is FileActivatedEventArgs fileArgs) {
+				string[] files = fileArgs.Files.Select(f => f.TryGetLocalPath()).OfType<string>().ToArray();
+				if(files.Length > 0) {
+					Dispatcher.UIThread.Post(() => {
+						if(_openedFilesHandler != null) {
+							_openedFilesHandler(files);
+						} else {
+							//Emulator isn't done initializing yet, load the files once it is
+							_pendingOpenedFiles.AddRange(files);
+						}
+					});
+				}
+			}
+		}
+
+		public static void SetOpenedFilesHandler(Action<string[]> handler)
+		{
+			Dispatcher.UIThread.VerifyAccess();
+			_openedFilesHandler = handler;
+			if(_pendingOpenedFiles.Count > 0) {
+				handler(_pendingOpenedFiles.ToArray());
+				_pendingOpenedFiles.Clear();
+			}
 		}
 	}
 }
