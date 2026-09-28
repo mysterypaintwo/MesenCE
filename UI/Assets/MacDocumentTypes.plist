@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Merged into the .app's Info.plist after bundling (see UI.csproj) -->
+<!-- Allows opening files in Mesen via Finder (Open With, drag & drop onto the Dock icon, etc.) -->
+<plist version="1.0">
+<dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeName</key>
+			<string>Mesen Compatible File</string>
+			<key>CFBundleTypeRole</key>
+			<string>Viewer</string>
+			<key>LSHandlerRank</key>
+			<string>Alternate</string>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>sfc</string>
+				<string>fig</string>
+				<string>smc</string>
+				<string>bs</string>
+				<string>st</string>
+				<string>spc</string>
+				<string>nes</string>
+				<string>fds</string>
+				<string>qd</string>
+				<string>unif</string>
+				<string>unf</string>
+				<string>studybox</string>
+				<string>nsf</string>
+				<string>nsfe</string>
+				<string>gb</string>
+				<string>gbc</string>
+				<string>gbx</string>
+				<string>gbs</string>
+				<string>pce</string>
+				<string>sgx</string>
+				<string>cue</string>
+				<string>hes</string>
+				<string>sms</string>
+				<string>gg</string>
+				<string>sg</string>
+				<string>col</string>
+				<string>gba</string>
+				<string>ws</string>
+				<string>wsc</string>
+				<string>pc2</string>
+				<string>zip</string>
+				<string>7z</string>
+				<string>ips</string>
+				<string>bps</string>
+				<string>mss</string>
+				<string>mmo</string>
+				<string>lua</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>
